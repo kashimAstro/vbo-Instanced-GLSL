@@ -8,7 +8,7 @@ class xApp : public ofBaseApp{
 
 	public:
 	    ofxPanel gui;
-	    ofxVec3Slider xPos,offset;
+	    ofParameter<ofVec3f>  xPos,offset;
         ofxIntSlider contatore;
         ofxVec3Slider dist;
         ofxToggle drawBox;
@@ -34,8 +34,8 @@ class xApp : public ofBaseApp{
             ofSetFrameRate(60);
 		    ofSetVerticalSync(true);
 		    gui.setup("","",10,255);
-            gui.add(xPos.setup("grid",ofVec3f(10.,0.,10.),ofVec3f(-55.,-55.,-55.),ofVec3f(55.,55.,55.)));
-            gui.add(offset.setup("offset",ofVec3f(0.,0.,0.),ofVec3f(-2.,-2.,-2.),ofVec3f(2.,2.,2.)));
+            gui.add(xPos.set("grid",ofVec3f(10.,0.,10.),ofVec3f(-55.,-55.,-55.),ofVec3f(55.,55.,55.)));
+            gui.add(offset.set("offset",ofVec3f(0.,0.,0.),ofVec3f(-2.,-2.,-2.),ofVec3f(2.,2.,2.)));
             gui.add(contatore.setup("counter",10,0,100));
             gui.add(label.setup("num model",""));
             gui.add(drawBox.setup("draw box",false));
@@ -73,7 +73,13 @@ class xApp : public ofBaseApp{
 			fbo.begin();
 			ofClear(0,0,0,255);
 			fbo.end();
+
+			xPos.addListener(this, &xApp::position);
 		}
+
+        void position(ofVec3f &val){
+            //fbo.allocate(val.x,val.y);
+        }
 
 		void update() {
 			ofSetWindowTitle(ofToString(ofGetFrameRate()));
@@ -94,7 +100,9 @@ class xApp : public ofBaseApp{
 
 		void draw() {
 			ofBackgroundGradient( ofColor(210), ofColor(10), OF_GRADIENT_BAR);
+
             fbo.draw(0,0);
+
 			label = ofToString(contatore*contatore);
 			ofEnableDepthTest();
 			camera.begin();
